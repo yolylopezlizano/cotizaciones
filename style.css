@@ -205,12 +205,62 @@ table input {
 }
 
 /* ==========================================================================
-   Configuración de Impresión Corregida (Permite fluidez entre páginas)
+   Controles Dinámicos de Tamaño de Imagen
    ========================================================================== */
-/* ==========================================================================
-   Configuración de Impresión Corregida (Optimización de Margen Cero)
-   ========================================================================== */
+.img-container-wrapper {
+    position: relative;
+    display: inline-block;
+    margin: 15px auto 5px auto;
+    text-align: center;
+    width: 100%;
+}
+
+/* Barra flotante de herramientas que aparece sobre la foto */
+.img-tools-bar {
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+    margin-bottom: 5px;
+    opacity: 0.3; /* Semitransparente por defecto */
+    transition: opacity 0.2s ease;
+}
+
+/* Resalta los botones cuando el usuario pasa el mouse por la celda */
+.img-container-wrapper:hover .img-tools-bar {
+    opacity: 1;
+}
+
+.img-tools-bar button {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    padding: 3px 6px;
+    font-size: 10px;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: background 0.1s;
+}
+
+.img-tools-bar button:hover {
+    background: #f1f5f9;
+}
+
+/* El tamaño de la imagen ahora se maneja de forma elástica mediante JS */
+.desc-editable img.preview-img {
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    border: 1px solid #e2e8f0;  
+    border-radius: 6px;         
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* Ocultar la barra de botones (+ , - , 🗑️) al imprimir o pasar a PDF */
 @media print {
+    .img-tools-bar {
+        display: none !important;
+    }
+
     /* Define márgenes estrechos y limpios para la hoja de papel física o PDF */
     @page {
         margin: 1cm 1.2cm; /* Reduce el espacio muerto del papel arriba/abajo y a los lados */

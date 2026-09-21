@@ -41,34 +41,80 @@ function removeRow(button) {
 }
 
 function uploadImage(input) {
-    if (input.files && input.files[0]) { // <-- Corrección aquí
+    if (input.files && input.files[0]) {
         var reader = new FileReader();
         reader.onload = function (e) {
-            // Buscamos el div editable que está arriba en la misma celda
             var descEditable = input.closest('td').querySelector('.desc-editable');
             
-            // Creamos el elemento de imagen
+            if (descEditable.innerText.trim() === "Descripcion del producto...") {
+                descEditable.innerText = "";
+            }
+            
+            // Contenedor principal de la imagen y sus botones
+            var imgContainer = document.createElement('div');
+            imgContainer.className = 'img-container-wrapper';
+            imgContainer.contentEditable = "false"; // Evita que se borre por error al presionar letras
+            
+            // Elemento de imagen
             var img = document.createElement('img');
             img.src = e.target.result;
             img.className = 'preview-img';
-            img.title = "Haz clic para eliminar la imagen";
+            img.style.maxWidth = "160px"; // Tamaño inicial por defecto
             
-            // Permitir eliminar la imagen si se hace clic sobre ella
-            img.onclick = function() {
-                if(confirm("¿Deseas eliminar esta imagen de la descripción?")) {
-                    this.remove();
+            // Barra superior de herramientas (+ , - , X)
+            var tools = document.createElement('div');
+            tools.className = 'img-tools-bar';
+            
+            // Botón Agrandar (+)
+            var btnZoomIn = document.createElement('button');
+            btnZoomIn.innerText = "➕";
+            btnZoomIn.title = "Agrandar imagen";
+            btnZoomIn.onclick = function() {
+                var currentWidth = parseInt(img.style.maxWidth) || 160;
+                if (currentWidth < 300) { // Límite máximo para no desarmar la celda
+                    img.style.maxWidth = (currentWidth + 20) + "px";
                 }
             };
             
-            // Insertamos la imagen al final del contenido
-            descEditable.appendChild(img);
+            // Botón Achicar (-)
+            var btnZoomOut = document.createElement('button');
+            btnZoomOut.innerText = "➖";
+            btnZoomOut.title = "Achicar imagen";
+            btnZoomOut.onclick = function() {
+                var currentWidth = parseInt(img.style.maxWidth) || 160;
+                if (currentWidth > 60) { // Límite mínimo visible
+                    img.style.maxWidth = (currentWidth - 20) + "px";
+                }
+            };
             
-            // Limpiamos el input para poder subir la misma imagen de nuevo si se borra
+            // Botón Eliminar (🗑️)
+            var btnDelete = document.createElement('button');
+            btnDelete.innerText = "🗑️";
+            btnDelete.title = "Eliminar imagen";
+            btnDelete.onclick = function() {
+                if(confirm("¿Deseas eliminar esta imagen de la descripción?")) {
+                    imgContainer.remove();
+                    if (descEditable.innerText.trim() === "") {
+                        descEditable.innerText = "Descripcion del producto...";
+                    }
+                }
+            };
+            
+            // Armamos la barra de herramientas y agregamos todo al div editable
+            tools.appendChild(btnZoomIn);
+            tools.appendChild(btnZoomOut);
+            tools.appendChild(btnDelete);
+            
+            imgContainer.appendChild(tools);
+            imgContainer.appendChild(img);
+            descEditable.appendChild(imgContainer);
+            
             input.value = "";
         }
-        reader.readAsDataURL(input.files[0]); // <-- Corrección aquí
+        reader.readAsDataURL(input.files[0]);
     }
 }
+
 
 function runCalculations() {
     var rows = document.getElementsByClassName('product-row');
