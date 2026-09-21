@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Sistema de Cotizaciones - LA ASOCIADOS</title>
+    <!-- Conexión con tu hoja de estilos independiente -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <div class="logo-container">
+                <img src="logo2.png" alt="Logo LA ASOCIADOS">
+            </div>
+        </div>
+
+        <div class="date-place">
+            Quito, <span id="autoDate" style="font-weight: bold;"></span>
+        </div>
+
+        <div class="client-header">
+            Sres.<br>
+            <!-- Campo de nombre principal actualizado con placeholder interactivo -->
+            <input type="text" id="clientNameInput" placeholder="Ingrese nombre del cliente..." oninput="syncName()" onfocus="clearInputPlaceholder(this)" onblur="restoreInputPlaceholder(this, 'Ingrese nombre del cliente...')"><br>
+            <strong>PRESENTE.</strong>
+        </div>
+
+        <p style="font-size: 14px; margin-bottom: 20px;">De acuerdo a su solicitud, le hacemos llegar la cotización de los productos solicitados.</p>
+
+        <table>
+            <tr>
+                <td style="width: 50%;">Comercial</td>
+                <!-- Campo comercial secundario actualizado con placeholder interactivo -->
+                <td><input type="text" id="commercialClient" placeholder="Ingrese nombre del cliente..." oninput="syncNameReverse()" onfocus="clearInputPlaceholder(this)" onblur="restoreInputPlaceholder(this, 'Ingrese nombre del cliente...')"></td>
+            </tr>
+            <tr>
+                <td>Número de Cliente</td>
+                <td><input type="text" placeholder="Ingrese número de cliente..." onfocus="clearInputPlaceholder(this)" onblur="restoreInputPlaceholder(this, 'Ingrese número de cliente...')"></td>
+            </tr>
+            <tr>
+                <td>Método de Pago</td>
+                <td><input type="text" value="60 % pedido y 40% entrega"></td>
+            </tr>
+            <tr>
+                <td>Términos de Pedido</td>
+                <td><input type="text" value="Se detalla los materiales solicitados"></td>
+            </tr>
+        </table>
+
+        <!-- Botón de aumentar producto como viñeta/indicador arriba de la tabla -->
+        <div class="add-row-zone">
+            <button class="btn-add" onclick="addNewRow()">+ Agregar Fila de Producto</button>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 12%;">CANTIDAD</th>
+                    <th style="width: 10%;">UNIDAD</th>
+                    <th style="width: 43%;">DESCRIPCIÓN</th>
+                    <th style="width: 15%;">VALOR UNIT</th>
+                    <th style="width: 20%;">VALOR TOTAL</th>
+                </tr>
+            </thead>
+            <tbody id="productContainer">
+                <tr class="product-row">
+                    <td>
+                        <button class="btn-del" onclick="removeRow(this)">X</button>
+                        <input type="text" class="text-center row-qty" value="0" oninput="runCalculations()">
+                    </td>
+                    <td><input type="text" class="text-center" value="U"></td>
+                    <td>
+                        <div class="desc-editable" contenteditable="true" onfocus="clearPlaceholder(this)" onblur="restorePlaceholder(this)">Descripcion del producto...</div>
+                        <div class="image-uploader-wrapper">
+                            <button class="btn-image" onclick="this.nextElementSibling.click()">📷 Agregar Imagen</button>
+                            <input type="file" accept="image/*" style="display: none;" onchange="uploadImage(this)">
+                        </div>
+                    </td>
+                    <td>
+                        <input type="text" class="text-right row-vunit" value="0.00" oninput="runCalculations()">
+                    </td>
+                    <td class="text-right row-total" style="padding-right:10px; font-weight: bold;">$0.00</td>
+                </tr>
+            </tbody>
+            <tbody>
+                <tr class="totals-row">
+                    <td colspan="3" rowspan="3" style="border: none; background: transparent;"></td>
+                    <td class="text-right">SUBTOTAL</td>
+                    <td class="text-right" id="subtotal" style="padding-right:10px;">$0.00</td>
+                </tr>
+                <tr class="totals-row">
+                    <td class="text-right">IVA 15%</td>
+                    <td class="text-right" id="iva" style="padding-right:10px;">$0.00</td>
+                </tr>
+                <tr class="totals-row" style="background-color: #f9f9f9;">
+                    <td class="text-right">TOTAL</td>
+                    <td class="text-right" id="totalGeneral" style="padding-right:10px; color: var(--primary); font-size:14px;">$0.00</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="notes-section">
+            <h4>NOTA:</h4>
+            Tiempo de entrega: <input type="text" value="A convenir" style="width:80%; border:none; border-bottom:1px dashed #ccc;"><br>
+            Forma de Pago: <input type="text" value="60 % pedido y 40% entrega de CONTADO" style="width:80%; border:none; border-bottom:1px dashed #ccc;"><br>
+            Validez de la Oferta: <input type="text" value="5 Días" style="width:80%; border:none; border-bottom:1px dashed #ccc;"><br>
+            <p style="margin-top: 15px;">Esperamos contar con su preferencia, confirmando la disposición de fortalecer nuestras relaciones comerciales.</p>
+        </div>
+
+        <div class="footer-signatures">
+            <div class="signature-block">
+                <strong>Ing. Alexandra Zúñiga</strong><br>
+                Asesora Comercial<br>
+                LA Asociados
+            </div>
+            <div class="signature-block" style="text-align: right; color: #555;">
+                09962669477 | 0983558651<br>
+                <span style="text-decoration: underline; color:#2563eb;">xavolizano@yahoo.com</span><br>
+                Amauta SN L21 Barrio Pakari Llacta Sector Quitumbe
+            </div>
+        </div>
+
+        <!-- Botón de imprimir en la parte inferior del contenedor -->
+        <div class="print-zone">
+            <button class="btn-print" onclick="window.print()">Imprimir / Guardar como PDF</button>
+        </div>
+    </div>
+
+    <!-- Conexión con tu lógica de JavaScript externa -->
+    <script src="script.js"></script>
+</body>
+</html>
